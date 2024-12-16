@@ -66,6 +66,21 @@ app.delete('/delete/:filename', (req, res) => {
     });
 });
 
+app.get('/stream', (req, res) => {
+    fs.readdir(UPLOADS_DIR, (err, files) => {
+        if (err) {
+            return res.status(500).send('Erreur lecture fichiers');
+        }
+        // Trier les fichiers par ordre chronologique (basé sur le timestamp dans le nom)
+        const sortedFiles = files.sort((a, b) => {
+            const timestampA = parseInt(a.split('-')[0]);
+            const timestampB = parseInt(b.split('-')[0]);
+            return timestampA - timestampB;
+        });
+        res.send(sortedFiles);
+    });
+});
+
 // Lancement du serveur
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://localhost:${PORT}`);
